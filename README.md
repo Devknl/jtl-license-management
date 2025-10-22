@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # JTL Lizenzmanagement App
 Eine einfache Laravel MVC-App für Lizenzmanagement.
 
@@ -37,3 +38,7 @@ http://localhost:8000/licenses
 
 # Routes anzeigen
 php artisan route:list
+=======
+# jtl-license-management
+Laravel MVC App für JTL Lizenzmanagement
+>>>>>>> c2d358c1747dda477ea62ff5d14582e36c4b86ac
