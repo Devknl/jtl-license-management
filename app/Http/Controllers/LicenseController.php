@@ -6,10 +6,34 @@ use App\Models\License;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+/**
+ * @OA\Info(
+ *     title="JTL Lizenzmanagement API",
+ *     version="1.0.0",
+ *     description="API für das JTL Lizenzmanagement System"
+ * )
+ * 
+ * @OA\Server(
+ *     url="http://localhost:8000/api",
+ *     description="Lokaler Entwicklungsserver"
+ * )
+ */
 class LicenseController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/licenses",
+     *     summary="Alle Lizenzen abrufen",
+     *     tags={"Lizenzen"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Liste aller Lizenzen",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/License")
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -26,7 +50,31 @@ class LicenseController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/licenses",
+     *     summary="Neue Lizenz erstellen",
+     *     tags={"Lizenzen"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"license_key", "customer_name", "product_name", "valid_until", "license_type"},
+     *             @OA\Property(property="license_key", type="string", example="JTL-DEMO-12345"),
+     *             @OA\Property(property="customer_name", type="string", example="Mustermann GmbH"),
+     *             @OA\Property(property="product_name", type="string", example="JTL-Warenwirtschaft"),
+     *             @OA\Property(property="license_type", type="string", enum={"perpetual", "subscription"}),
+     *             @OA\Property(property="valid_until", type="string", format="date", example="2024-12-31")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Lizenz erfolgreich erstellt",
+     *         @OA\JsonContent(ref="#/components/schemas/License")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validierungsfehler"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -41,14 +89,34 @@ class LicenseController extends Controller
             'license_key.unique' => 'Dieser Lizenzschlüssel existiert bereits'
         ]);
 
-        License::create($request->all());
+        $license = License::create($request->all());
 
         return redirect()->route('licenses.index')
             ->with('success', 'Lizenz erfolgreich erstellt!');
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/licenses/{id}",
+     *     summary="Lizenzdetails abrufen",
+     *     tags={"Lizenzen"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Lizenz ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lizenzdetails",
+     *         @OA\JsonContent(ref="#/components/schemas/License")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Lizenz nicht gefunden"
+     *     )
+     * )
      */
     public function show(License $license)
     {
@@ -64,7 +132,39 @@ class LicenseController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/licenses/{id}",
+     *     summary="Lizenz aktualisieren",
+     *     tags={"Lizenzen"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Lizenz ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"license_key", "customer_name", "product_name", "valid_until", "license_type"},
+     *             @OA\Property(property="license_key", type="string", example="JTL-DEMO-12345"),
+     *             @OA\Property(property="customer_name", type="string", example="Mustermann GmbH"),
+     *             @OA\Property(property="product_name", type="string", example="JTL-Warenwirtschaft"),
+     *             @OA\Property(property="license_type", type="string", enum={"perpetual", "subscription"}),
+     *             @OA\Property(property="valid_until", type="string", format="date", example="2024-12-31"),
+     *             @OA\Property(property="status", type="string", enum={"active", "expired", "suspended"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lizenz erfolgreich aktualisiert",
+     *         @OA\JsonContent(ref="#/components/schemas/License")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validierungsfehler"
+     *     )
+     * )
      */
     public function update(Request $request, License $license)
     {
@@ -85,7 +185,26 @@ class LicenseController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/licenses/{id}",
+     *     summary="Lizenz löschen",
+     *     tags={"Lizenzen"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Lizenz ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lizenz erfolgreich gelöscht"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Lizenz nicht gefunden"
+     *     )
+     * )
      */
     public function destroy(License $license)
     {
@@ -96,7 +215,7 @@ class LicenseController extends Controller
     }
 
     /**
-     * Zeige das Lizenzvalidierungs-Formular
+     * Show the form for license validation.
      */
     public function showValidationForm()
     {
@@ -104,7 +223,38 @@ class LicenseController extends Controller
     }
 
     /**
-     * Validiere eine Lizenz
+     * @OA\Post(
+     *     path="/validate",
+     *     summary="Lizenz validieren",
+     *     tags={"Validierung"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"license_key"},
+     *             @OA\Property(property="license_key", type="string", example="JTL-DEMO-12345")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Validierungsergebnis",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="valid", type="boolean", example=true),
+     *             @OA\Property(property="license", ref="#/components/schemas/License"),
+     *             @OA\Property(property="is_expired", type="boolean", example=false),
+     *             @OA\Property(property="days_remaining", type="integer", example=45),
+     *             @OA\Property(property="validation_date", type="string", format="date"),
+     *             @OA\Property(property="message", type="string", example="Lizenz ist gültig")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Lizenz nicht gefunden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="valid", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Lizenzschlüssel nicht gefunden")
+     *         )
+     *     )
+     * )
      */
     public function validateLicense(Request $request)
     {
@@ -149,7 +299,43 @@ class LicenseController extends Controller
     }
 
     /**
-     * API Endpoint für Lizenzvalidierung (für externe Services)
+     * @OA\Post(
+     *     path="/api/validate",
+     *     summary="Lizenz validieren (API)",
+     *     tags={"Validierung"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"license_key"},
+     *             @OA\Property(property="license_key", type="string", example="JTL-DEMO-12345")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Validierungsergebnis",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="valid", type="boolean", example=true),
+     *             @OA\Property(property="license", type="object",
+     *                 @OA\Property(property="key", type="string"),
+     *                 @OA\Property(property="customer", type="string"),
+     *                 @OA\Property(property="product", type="string"),
+     *                 @OA\Property(property="type", type="string"),
+     *                 @OA\Property(property="status", type="string"),
+     *                 @OA\Property(property="valid_until", type="string", format="date"),
+     *                 @OA\Property(property="days_remaining", type="integer")
+     *             ),
+     *             @OA\Property(property="message", type="string", example="Lizenz ist gültig")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Lizenz nicht gefunden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="valid", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Lizenzschlüssel nicht gefunden")
+     *         )
+     *     )
+     * )
      */
     public function apiValidateLicense(Request $request)
     {

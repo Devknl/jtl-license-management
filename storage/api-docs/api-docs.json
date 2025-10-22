@@ -1,0 +1,521 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "JTL Lizenzmanagement API",
+        "description": "API für das JTL Lizenzmanagement System",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Lokaler Entwicklungsserver"
+        }
+    ],
+    "paths": {
+        "/licenses": {
+            "get": {
+                "tags": [
+                    "Lizenzen"
+                ],
+                "summary": "Alle Lizenzen abrufen",
+                "operationId": "d71ffc61ac85bb0055afaa02308501eb",
+                "responses": {
+                    "200": {
+                        "description": "Liste aller Lizenzen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/License"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Lizenzen"
+                ],
+                "summary": "Neue Lizenz erstellen",
+                "operationId": "a1396b9833886e4ab5c168ee413ea0e7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "license_key",
+                                    "customer_name",
+                                    "product_name",
+                                    "valid_until",
+                                    "license_type"
+                                ],
+                                "properties": {
+                                    "license_key": {
+                                        "type": "string",
+                                        "example": "JTL-DEMO-12345"
+                                    },
+                                    "customer_name": {
+                                        "type": "string",
+                                        "example": "Mustermann GmbH"
+                                    },
+                                    "product_name": {
+                                        "type": "string",
+                                        "example": "JTL-Warenwirtschaft"
+                                    },
+                                    "license_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "perpetual",
+                                            "subscription"
+                                        ]
+                                    },
+                                    "valid_until": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lizenz erfolgreich erstellt",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/License"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validierungsfehler"
+                    }
+                }
+            }
+        },
+        "/licenses/{id}": {
+            "get": {
+                "tags": [
+                    "Lizenzen"
+                ],
+                "summary": "Lizenzdetails abrufen",
+                "operationId": "5bf95e93e3ca950497d6265b1d14f0ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Lizenz ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lizenzdetails",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/License"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lizenz nicht gefunden"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Lizenzen"
+                ],
+                "summary": "Lizenz aktualisieren",
+                "operationId": "3a7ac4b53e687e4088f94be7de158fa9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Lizenz ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "license_key",
+                                    "customer_name",
+                                    "product_name",
+                                    "valid_until",
+                                    "license_type"
+                                ],
+                                "properties": {
+                                    "license_key": {
+                                        "type": "string",
+                                        "example": "JTL-DEMO-12345"
+                                    },
+                                    "customer_name": {
+                                        "type": "string",
+                                        "example": "Mustermann GmbH"
+                                    },
+                                    "product_name": {
+                                        "type": "string",
+                                        "example": "JTL-Warenwirtschaft"
+                                    },
+                                    "license_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "perpetual",
+                                            "subscription"
+                                        ]
+                                    },
+                                    "valid_until": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "expired",
+                                            "suspended"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lizenz erfolgreich aktualisiert",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/License"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validierungsfehler"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Lizenzen"
+                ],
+                "summary": "Lizenz löschen",
+                "operationId": "873948357f7325b296c18682dd4c9703",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Lizenz ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lizenz erfolgreich gelöscht"
+                    },
+                    "404": {
+                        "description": "Lizenz nicht gefunden"
+                    }
+                }
+            }
+        },
+        "/validate": {
+            "post": {
+                "tags": [
+                    "Validierung"
+                ],
+                "summary": "Lizenz validieren",
+                "operationId": "94bead4aad804ff767b1ceb4a6e91342",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "license_key"
+                                ],
+                                "properties": {
+                                    "license_key": {
+                                        "type": "string",
+                                        "example": "JTL-DEMO-12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Validierungsergebnis",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "valid": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "license": {
+                                            "$ref": "#/components/schemas/License"
+                                        },
+                                        "is_expired": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "days_remaining": {
+                                            "type": "integer",
+                                            "example": 45
+                                        },
+                                        "validation_date": {
+                                            "type": "string",
+                                            "format": "date"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lizenz ist gültig"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lizenz nicht gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "valid": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lizenzschlüssel nicht gefunden"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/validate": {
+            "post": {
+                "tags": [
+                    "Validierung"
+                ],
+                "summary": "Lizenz validieren (API)",
+                "operationId": "1f57bf5bc03d39dff2c427cf9cf3753b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "license_key"
+                                ],
+                                "properties": {
+                                    "license_key": {
+                                        "type": "string",
+                                        "example": "JTL-DEMO-12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Validierungsergebnis",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "valid": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "license": {
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string"
+                                                },
+                                                "customer": {
+                                                    "type": "string"
+                                                },
+                                                "product": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string"
+                                                },
+                                                "valid_until": {
+                                                    "type": "string",
+                                                    "format": "date"
+                                                },
+                                                "days_remaining": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lizenz ist gültig"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Lizenz nicht gefunden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "valid": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lizenzschlüssel nicht gefunden"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "License": {
+                "title": "License",
+                "description": "Lizenz Modell",
+                "required": [
+                    "license_key",
+                    "customer_name",
+                    "product_name",
+                    "valid_until",
+                    "license_type"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Eindeutige ID der Lizenz",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "license_key": {
+                        "description": "Lizenzschlüssel im Format JTL-XXX-12345",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "JTL-DEMO-12345"
+                    },
+                    "customer_name": {
+                        "description": "Name des Kunden",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Mustermann GmbH"
+                    },
+                    "product_name": {
+                        "description": "Name des Produkts",
+                        "type": "string",
+                        "maxLength": 50,
+                        "example": "JTL-Warenwirtschaft"
+                    },
+                    "license_type": {
+                        "description": "Typ der Lizenz",
+                        "type": "string",
+                        "enum": [
+                            "perpetual",
+                            "subscription"
+                        ],
+                        "example": "subscription"
+                    },
+                    "status": {
+                        "description": "Aktueller Status der Lizenz",
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "expired",
+                            "suspended"
+                        ],
+                        "example": "active"
+                    },
+                    "valid_until": {
+                        "description": "Gültigkeitsdatum der Lizenz",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-12-31"
+                    },
+                    "created_at": {
+                        "description": "Erstellungsdatum",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Letztes Aktualisierungsdatum",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00.000000Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Lizenzen",
+            "description": "Lizenzen"
+        },
+        {
+            "name": "Validierung",
+            "description": "Validierung"
+        }
+    ]
+}
